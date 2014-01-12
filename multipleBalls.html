@@ -1,0 +1,109 @@
+<!--
+ --- Property of Alan Wright
+ --- 1/12/2014
+ --- www.alan-wright.com
+ --- www.wrightlyso.com
+ --->
+ 
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <script type="text/javascript">
+	var context;
+	var initX = 100;
+	var initY = 100;
+	var initRadius = 25;
+	var initDx = 7;
+	var initDy = 7;
+	var maxNumBalls = 20;
+	var waitTime = 20;
+	var balls = new Array();
+	
+	function init(){
+		context = myCanvas.getContext('2d');
+		balls.push(new ball(initX, initY, initRadius, initDx, initDy));
+		
+		//Set an interval for the canvas to be refreshed.
+		// Basically call the draw function every 10 ms
+		setInterval(draw, 10);
+	}
+	
+	//Create a ball constructor
+	function ball(x, y, radius, dx, dy, skip)
+	{
+		this.x = x;
+		this.y = y;
+		this.radius = initRadius;
+		this.dx = dx;
+		this.dy = dy;
+		this.color = get_random_color();
+		this.waitY = 0;
+		this.waitX = 0;
+	}
+	
+	function get_random_color() {
+		var letters = '0123456789ABCDEF'.split('');
+		var color = '#';
+		for (var i = 0; i < 6; i++ ) {
+			color += letters[Math.round(Math.random() * 15)];
+		}
+		return color;
+	}
+	
+	function draw(){
+		//Clear the old circle before we draw the new one
+		context.clearRect(0,0, myCanvas.width, myCanvas.height); //This erases the entire canvas
+	
+		//Loop through each ball on screen and update
+		var i;
+		for(i = 0; i < balls.length; i++){
+		
+			context.beginPath();
+			context.fillStyle = balls[i].color;
+			
+			//Draw a circle of radius 20 at the current coordinates on the canvas. 
+			context.arc(balls[i].x, balls[i].y, balls[i].radius, 0, Math.PI*2, true); 
+			context.closePath();
+			context.fill();
+			
+			//Check boundaries and negate if necessary
+			if (balls[i].x - balls[i].radius<= 0 || balls[i].x + balls[i].radius>= myCanvas.width && balls[i].waitX <=0){
+			
+				//If we have not gone over our limit
+				if(balls.length != maxNumBalls){
+					//Put the new ball on
+					balls[i].waitX = waitTime;
+					balls.push(new ball(Math.random()*myCanvas.width, Math.random()*myCanvas.height, initRadius, initDx, initDy));
+				}
+				else balls[i].waitX--;
+				
+				balls[i].dx = -balls[i].dx;
+				balls[i].waitX=waitTime;
+			}
+			else balls[i].waitX--;
+			
+			if (balls[i].y - balls[i].radius <= 0 || balls[i].y + balls[i].radius >= myCanvas.height && balls[i].waitY<=0){
+				//balls.push(new ball(initX, initY, initRadius, initDx, initDy));
+				
+				balls[i].dy = -balls[i].dy;
+				balls[i].waitY=waitTime;
+			}
+			else balls[i].waitY--;
+				
+			//Increment dx,dy
+			balls[i].x += balls[i].dx;
+			balls[i].y += balls[i].dy;
+		}
+	}
+	</script>
+	
+  
+	<title>Ball Bouncing</title>
+  
+</head>
+<body onLoad = "init();"> <!-- when the body is loaded, call the init() function -->
+	<canvas id = "myCanvas" width ="500" height = "400">
+	</canvas>
+</body>
+</html>

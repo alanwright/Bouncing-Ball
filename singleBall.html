@@ -1,0 +1,60 @@
+<!--
+ --- Property of Alan Wright
+ --- 1/12/2014
+ --- www.alan-wright.com
+ --- www.wrightlyso.com
+ --->
+
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <script>
+	var context;
+	var x = 100;
+	var y = 100;
+	var radius = 20;
+	var dx = 5;
+	var dy = 5;
+	
+	function init(){
+		context = myCanvas.getContext('2d');
+		
+		//Set an interval for the canvas to be refreshed.
+		// Basically call the draw function every 10 ms
+		setInterval(draw, 10);
+	}
+	
+	function draw(){
+		//Clear the old circle before we draw the new one
+		context.clearRect(0,0, myCanvas.width, myCanvas.height); //This erases the entire canvas
+	
+		context.beginPath();
+		context.fillStyle = "#0000ff";
+		
+		//Draw a circle of radius 20 at the current coordinates on the canvas. 
+		context.arc(x, y, radius, 0, Math.PI*2, true); 
+		context.closePath();
+		context.fill();
+		
+		//Check boundaries and negate if necessary
+		if (x + radius <= 0 || x - radius <= 0 || x + radius >= myCanvas.width || x - radius >= myCanvas.width)
+			dx = -dx;
+		if (y + radius <= 0 || y - radius <= 0 || y + radius >= myCanvas.height || y - radius >= myCanvas.height)
+			dy = -dy;
+			
+		//Increment dx,dy
+		x+=dx;
+		y+=dy;
+	}
+	</script>
+	
+  
+	<title>Ball Bouncing</title>
+  
+</head>
+<body onLoad = "init();"> <!-- when the body is loaded, call the init() function -->
+	<canvas id = "myCanvas" width ="500" height = "400">
+	</canvas>
+</body>
+</html>
